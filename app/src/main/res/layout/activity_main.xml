@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="经纬度（十进制）"
+        android:textSize="18sp" />
+
+    <EditText
+        android:id="@+id/et_latitude"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="纬度，例：39.9042"
+        android:inputType="numberDecimal" />
+
+    <EditText
+        android:id="@+id/et_longitude"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="经度，例：116.4074"
+        android:inputType="numberDecimal" />
+
+    <Button
+        android:id="@+id/btn_start"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="开始模拟" />
+
+    <Button
+        android:id="@+id/btn_stop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="停止模拟" />
+
+    <TextView
+        android:id="@+id/tv_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="状态：未模拟" />
+</LinearLayout>
