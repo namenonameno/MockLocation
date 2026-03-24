@@ -29,7 +29,11 @@ public class MockLocationService extends Service {
             double lat = intent.getDoubleExtra("latitude", 0);
             double lng = intent.getDoubleExtra("longitude", 0);
             if (lat != 0 && lng != 0) {
-                locationHelper.startMockLocation(lat, lng);
+                boolean success = locationHelper.startMockLocation(lat, lng);
+                if (!success) {
+                    // 模拟失败时，可以停止服务并通知用户
+                    stopSelf();
+                }
             }
         }
         return START_STICKY;
