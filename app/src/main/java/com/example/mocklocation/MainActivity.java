@@ -3,7 +3,6 @@ package com.example.mocklocation;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -57,41 +56,42 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startMock() {
-    // 不再检查 ALLOW_MOCK_LOCATION，直接尝试模拟
-    // 模拟位置是否真正可用，会在 LocationHelper 中抛出异常或失败
+        // 不再检查 Settings.Secure.ALLOW_MOCK_LOCATION，因为新系统已废弃
+        // 直接尝试模拟，失败时会在 LocationHelper 中给出提示
 
-    String latStr = etLat.getText().toString().trim();
-    String lngStr = etLng.getText().toString().trim();
-    if (latStr.isEmpty() || lngStr.isEmpty()) {
-        Toast.makeText(this, "请输入经纬度", Toast.LENGTH_SHORT).show();
-        return;
+        String latStr = etLat.getText().toString().trim();
+        String lngStr = etLng.getText().toString().trim();
+        if (latStr.isEmpty() || lngStr.isEmpty()) {
+            Toast.makeText(this, "请输入经纬度", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        double lat, lng;
+        try {
+            lat = Double.parseDouble(latStr);
+            lng = Double.parseDouble(lngStr);
+        } catch (NumberFormatException e) {
+            Toast.makeText(this, "经纬度格式错误", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // 启动前台服务，服务内部会调用 locationHelper.startMockLocation()
+        Intent serviceIntent = new Intent(this, MockLocationService.class);
+        serviceIntent.putExtra("latitude", lat);
+        serviceIntent.putExtra("longitude", lng);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(serviceIntent);
+        } else {
+            startService(serviceIntent);
+        }
+
+        tvStatus.setText("状态：模拟中 (纬度: " + lat + ", 经度: " + lng + ")");
     }
-
-    double lat, lng;
-    try {
-        lat = Double.parseDouble(latStr);
-        lng = Double.parseDouble(lngStr);
-    } catch (NumberFormatException e) {
-        Toast.makeText(this, "经纬度格式错误", Toast.LENGTH_SHORT).show();
-        return;
-    }
-
-    Intent serviceIntent = new Intent(this, MockLocationService.class);
-    serviceIntent.putExtra("latitude", lat);
-    serviceIntent.putExtra("longitude", lng);
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        startForegroundService(serviceIntent);
-    } else {
-        startService(serviceIntent);
-    }
-
-    tvStatus.setText("状态：模拟中 (纬度: " + lat + ", 经度: " + lng + ")");
-}
 
     private void stopMock() {
         Intent serviceIntent = new Intent(this, MockLocationService.class);
         stopService(serviceIntent);
-        locationHelper.stopMockLocation();
+        locationHelper.stopMockLocation(); // 确保清除
         tvStatus.setText("状态：未模拟");
     }
 
