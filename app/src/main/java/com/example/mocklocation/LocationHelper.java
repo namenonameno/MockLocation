@@ -7,7 +7,7 @@ import android.os.Build;
 import android.os.SystemClock;
 
 public class LocationHelper {
-    private static final String MOCK_PROVIDER = LocationManager.GPS_PROVIDER;
+    private static final String MOCK_PROVIDER = LocationManager.MOCK_PROVIDER;
     private LocationManager locationManager;
     private boolean isMocking = false;
 
