@@ -57,38 +57,36 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startMock() {
-        if (!Settings.Secure.getString(getContentResolver(), Settings.Secure.ALLOW_MOCK_LOCATION).equals("1")) {
-            Toast.makeText(this, "请先在开发者选项中启用\"允许模拟位置\"并选择本应用", Toast.LENGTH_LONG).show();
-            return;
-        }
+    // 不再检查 ALLOW_MOCK_LOCATION，直接尝试模拟
+    // 模拟位置是否真正可用，会在 LocationHelper 中抛出异常或失败
 
-        String latStr = etLat.getText().toString().trim();
-        String lngStr = etLng.getText().toString().trim();
-        if (latStr.isEmpty() || lngStr.isEmpty()) {
-            Toast.makeText(this, "请输入经纬度", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        double lat, lng;
-        try {
-            lat = Double.parseDouble(latStr);
-            lng = Double.parseDouble(lngStr);
-        } catch (NumberFormatException e) {
-            Toast.makeText(this, "经纬度格式错误", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        Intent serviceIntent = new Intent(this, MockLocationService.class);
-        serviceIntent.putExtra("latitude", lat);
-        serviceIntent.putExtra("longitude", lng);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(serviceIntent);
-        } else {
-            startService(serviceIntent);
-        }
-
-        tvStatus.setText("状态：模拟中 (纬度: " + lat + ", 经度: " + lng + ")");
+    String latStr = etLat.getText().toString().trim();
+    String lngStr = etLng.getText().toString().trim();
+    if (latStr.isEmpty() || lngStr.isEmpty()) {
+        Toast.makeText(this, "请输入经纬度", Toast.LENGTH_SHORT).show();
+        return;
     }
+
+    double lat, lng;
+    try {
+        lat = Double.parseDouble(latStr);
+        lng = Double.parseDouble(lngStr);
+    } catch (NumberFormatException e) {
+        Toast.makeText(this, "经纬度格式错误", Toast.LENGTH_SHORT).show();
+        return;
+    }
+
+    Intent serviceIntent = new Intent(this, MockLocationService.class);
+    serviceIntent.putExtra("latitude", lat);
+    serviceIntent.putExtra("longitude", lng);
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        startForegroundService(serviceIntent);
+    } else {
+        startService(serviceIntent);
+    }
+
+    tvStatus.setText("状态：模拟中 (纬度: " + lat + ", 经度: " + lng + ")");
+}
 
     private void stopMock() {
         Intent serviceIntent = new Intent(this, MockLocationService.class);
